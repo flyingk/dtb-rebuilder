@@ -10,6 +10,26 @@
 #include "am33xx.dtsi"
 #include "am335x-bone-common-no-capemgr.dtsi"
 
+/* pruss: pick one: */
+
+/*
+ * /etc/modprobe.d/pruss-blacklist.conf
+ *
+ * blacklist uio_pruss
+ */
+
+/* #include "am33xx-pruss-rproc.dtsi" */
+
+/*
+ * /etc/modprobe.d/pruss-blacklist.conf
+ *
+ * blacklist pruss
+ * blacklist pruss_intc
+ * blacklist pru-rproc
+ */
+
+/* #include "am33xx-pruss-uio.dtsi" */
+
 / {
 	model = "TI AM335x BeagleBone";
 	compatible = "ti,am335x-bone", "ti,am33xx";
@@ -23,19 +43,6 @@
 
 &mmc1 {
 	vmmc-supply = <&ldo3_reg>;
-};
-
-&am33xx_pinmux {
-	pinctrl-names = "default";
-	/* pinctrl-0 = <&clkout2_pin>; */
-};
-
-&sham {
-	status = "okay";
-};
-
-&aes {
-	status = "okay";
 };
 
 #include "am335x-bone-argus.dtsi"
