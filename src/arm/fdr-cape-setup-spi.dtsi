@@ -1,0 +1,230 @@
+#include "am33xx.dtsi"
+#include "am335x-bone-common.dtsi"
+
+&am33xx_pinmux {
+
+		capeled_pins: pinmux_capeled_pins {
+			pinctrl-single,pins = <
+				0x1a4 0x7	/* gpio3_19 Cape led */
+			>;
+		};
+		ctrl_pins: pinmux_ctrl_pins {
+			pinctrl-single,pins = <
+				0x3c  0xf	/* gpio1_15 Reset cards      | OUTPUT | NA | MODE7 */
+				0x1ac 0xf	/* gpio3_21 Reset clock mcu  | OUTPUT | NA | MODE7 */
+			>;
+		};
+		spi_cs_pins: pinmux_spi_cs_pins {
+			pinctrl-single,pins = <
+				0x48 0x17	/* gpio1_18 C0 | OUTPUT | PULLUP| MODE7 */
+				0x4c 0x17	/* gpio1_19 C1 | OUTPUT | PULLUP| MODE7 */
+				0x78 0x17	/* gpio1_28 C2 | OUTPUT | PULLUP| MODE7 */
+			>;
+		};
+		timing_pins: pinmux_timing_pins {
+			pinctrl-single,pins = <
+				0x44 0x27	/* gpio1_17 sync in 100Hz   | INPUT  | PULLDOWN |   */
+				0x40 0x3f	/* gpio1_16 1pps in         | INPUT  | EXT PULLUP | */
+				0x34 0x7	/* gpio1_13 sync out 100 Hz | OUTPUT | PULLDOWN |   */
+			>;
+		};
+		uart4_pins: pinmux_uart4_pins {
+			pinctrl-single,pins = <
+				0x070 0x26	/* gpmc_wait0.uart4_rxd | MODE6 */
+				0x074 0x06	/* gpmc_wpn.uart4_txd | MODE6 */
+			>;
+		};
+		uart5_pins: pinmux_uart5_pins {
+			pinctrl-single,pins = <
+				0x0C4 0x24	/* lcd_data9.uart5_rxd | MODE4 */
+				0x0C0 0x04	/* lcd_data8.uart5_txd | MODE4 */
+			>;
+		};
+
+		i2c1_pins: pinmux_i2c1_pins {
+			pinctrl-single,pins = <
+				0x180 0x73	/* uart1_rxd.i2c1_sda, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+				0x184 0x73	/* uart1_txd.i2c1_scl, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+			>;
+		};
+		
+		i2c2_pins: pinmux_i2c2_pins {
+			pinctrl-single,pins = <
+				0x178 0x73 	/* uart1_ctsn.i2c2_sda, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+				0x17c 0x73	/* uart1_rtsn.i2c2_scl, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+			>;
+		};
+		
+		spi0_pins: pinmux_spi0_pins {
+			pinctrl-single,pins = <
+				0x150 0x30	/* spi0_sclk.spi0_sclk, INPUT_PULLUP | MODE0 */
+				0x154 0x30	/* spi0_d0.spi0_d0, INPUT_PULLUP | MODE0 */
+				0x158 0x10	/* spi0_d1.spi0_d1, OUTPUT_PULLUP | MODE0 */
+				0x15c 0x10	/* spi0_cs0.spi0_cs0, OUTPUT_PULLUP | MODE0 */
+			>;
+		};
+		
+		spi1_pins: pinmux_spi1_pins {
+				pinctrl-single,pins = <
+				0x190 0x33	/* spi1_sclk, INPUT_PULLUP | MODE3 */
+				0x194 0x33	/* spi1_d0, INPUT_PULLUP | MODE3 */
+				0x198 0x13	/* spi1_d1, OUTPUT_PULLUP | MODE3 */
+				0x19c 0x13	/* spi1_cs0, OUTPUT_PULLUP | MODE3 */
+			>;
+		};
+	};
+		
+&ocp {
+
+		cape-leds {
+			compatible = "gpio-leds";
+			pinctrl-names = "default";
+			pinctrl-0 = <&capeled_pins>;
+			
+			led0 {
+				label = "cape:white:activity";
+				gpios = <&gpio3 19 0>;	/* Why is the gpio here from 1 to 4? Not sense...*/
+				default-state = "off";
+				linux,default-trigger = "heartbeat";
+			};
+		};
+		
+		ctrl-pins {
+			compatible = "bone-pinmux-helper";
+			pinctrl-names = "default";
+			pinctrl-0 = <&ctrl_pins>;
+			status = "okay";
+		};
+		cs-sel-pins {
+			compatible = "bone-pinmux-helper";
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi_cs_pins>;
+			status = "okay";
+		};
+		timing-pins {
+			compatible = "bone-pinmux-helper";
+			pinctrl-names = "default";
+			pinctrl-0 = <&timing_pins>;
+			status = "okay";
+		};
+};
+
+&rtc {
+	status = "disabled";
+};
+
+&uart4 {	/* really uart4 */
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart4_pins>;
+};
+
+&uart5 {	/* really uart5 */
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart5_pins>;
+};
+
+
+
+&i2c1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins>;
+	
+	clock-frequency = <400000>;
+	
+};
+
+&i2c2 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2_pins>;
+
+	clock-frequency = <400000>;
+
+	cape_eeprom0: cape_eeprom0@54 {
+		compatible = "at,24c256";
+		reg = <0x54>;
+	};
+
+	cape_eeprom1: cape_eeprom1@55 {
+		compatible = "at,24c256";
+		reg = <0x55>;
+	};
+
+	cape_eeprom2: cape_eeprom2@56 {
+		compatible = "at,24c256";
+		reg = <0x56>;
+	};
+
+	cape_eeprom3: cape_eeprom3@57 {
+		compatible = "at,24c256";
+		reg = <0x57>;
+	};
+	
+	rtc_cape: rtc@68 {
+		compatible = "dallas,ds1307";
+		reg = <0x68>;
+	};
+};
+
+/* spi0 is numbered correctly */
+&spi0 {	
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi0_pins>;
+
+
+	channel@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "spidev";
+
+		reg = <0>;
+		spi-max-frequency = <16000000>;
+		spi-cpha;
+	};
+
+
+	channel@1 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "spidev";
+
+		reg = <1>;
+		spi-max-frequency = <16000000>;
+	};
+};
+
+/* spi1 is numbered correctly */
+&spi1 {	
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1_pins>;
+
+
+	channel@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "spidev";
+
+		reg = <0>;
+		spi-max-frequency = <16000000>;
+		spi-cpha;
+	};
+
+
+	channel@1 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "spidev";
+
+		reg = <1>;
+		spi-max-frequency = <16000000>;
+	};
+};
