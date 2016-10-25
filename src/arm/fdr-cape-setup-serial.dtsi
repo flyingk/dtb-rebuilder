@@ -116,13 +116,13 @@
 	status = "disabled";
 };
 
-&uart2 {	/* really uart1 */
+&uart1 {
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart1_pins>;
 };
 
-&uart3 {	/* really uart2 */
+&uart2 {
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart2_pins>;
